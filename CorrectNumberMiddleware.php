@@ -3,10 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Foundation\Http\Middleware\TransformsRequest;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\ParameterBag;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * This middleware converts Persian and Arabic numbers in specified JSON fields to English numbers.
@@ -14,7 +11,10 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CorrectNumberMiddleware
 {
-    public function handle($request, Closure $next, ...$params)
+    /**
+     * {@inheritdoc}
+     */
+    public function handle(Request $request, Closure $next, ...$params)
     {
         $this->clean($request, $params);
 
@@ -23,39 +23,34 @@ class CorrectNumberMiddleware
 
     /**
      * Clean the JSON data by converting specified fields' numbers to English numbers.
-     * @param $json
-     * @param $params array list of JSON field names to be processed
+     *
+     * @param   \Illuminate\Http\Request  $request
+     * @param   $params  array list of JSON field names to be processed
      * @return void
      */
-    private function clean($json, array $params): void
+    private function clean(Request $request, array $params): void
     {
-        array_map(function ($fieldName) use ($json){
-            if ($json->has($fieldName)) {
-                $json->replace(
-                    [$fieldName  => $this->convertNumbers($json->get($fieldName))] +
-                    $json->all()
-                );
+        foreach ($params as $name) {
+            // Check if the field exists and is a string
+            if ($request->has($name) && is_string($request->{$name})) {
+                $request->replace([
+                    $name => $this->convertToEnglish($request->{$name}),
+                ] + $request->all());
             }
-        }, $params);
+        }
     }
 
     /**
-     * Convert Persian and Arabic numbers to English numbers
-     * @param $content
-     * @return int Converted content with English numbers
+     * Convert Persian and Arabic numbers to English numbers.
+     *
+     * @param  string  $content
+     * @return string
      */
-    protected function convertNumbers($content): int
+    protected function convertToEnglish(string $content): string
     {
+        $persian = ['۰', '۱', '۲', '۳', '۴', '٤', '۵', '٥', '۶', '٦', '۷', '۸', '۹'];
+        $english = [0, 1, 2, 3, 4, 4, 5, 5, 6, 6, 7, 8, 9];
 
-        $persian    = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
-        $en         = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-
-        array_map(function($persian, $en) use (&$content){
-            $content = str_replace($persian, $en, $content);
-        } , $persian, $en);
-
-        return $content;
+        return str_replace($persian, $english, $content);
     }
-
-
 }
