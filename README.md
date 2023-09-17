@@ -18,9 +18,15 @@ To use this middleware in your Laravel application, follow these steps:
 
 
 ## Usage
-You can use this middleware in your Laravel application to ensure consistent number representation in your JSON responses
+You can use this middleware in your Laravel application to ensure consistent number representation in your JSON responses. Here's an example of how to apply it to specific routes:
+
 
 ```php
+
+use App\Http\Controllers\Account\TransferController;
+use App\Http\Middleware\CorrectNumberMiddleware;
+
+// Apply the middleware to specific routes
 
 Route::post('/transfer-money', [\App\Http\Controllers\Account\TransferController::class, '__invoke'])
     ->middleware(\App\Http\Middleware\CorrectNumberMiddleware::class .':source_card_number,dest_card_number,amount');
