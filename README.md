@@ -29,6 +29,6 @@ use App\Http\Middleware\CorrectNumberMiddleware;
 // Apply the middleware to specific routes
 
 Route::post('/transfer-money', [\App\Http\Controllers\Account\TransferController::class, '__invoke'])
-    ->middleware(\App\Http\Middleware\CorrectNumberMiddleware::class .':source_card_number,dest_card_number,amount');
+    ->middleware(CorrectNumberMiddleware::class .':source_card_number,dest_card_number,amount');
 
 ```
