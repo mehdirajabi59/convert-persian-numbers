@@ -24,8 +24,8 @@ class CorrectNumberMiddleware
     /**
      * Clean the JSON data by converting specified fields' numbers to English numbers.
      *
-     * @param   \Illuminate\Http\Request  $request
-     * @param   $params  array list of JSON field names to be processed
+     * @param  \Illuminate\Http\Request  $request
+     * @param  $params  array list of JSON field names to be processed
      * @return void
      */
     private function clean(Request $request, array $params): void
@@ -48,9 +48,9 @@ class CorrectNumberMiddleware
      */
     protected function convertToEnglish(string $content): string
     {
-        $persian = ['۰', '۱', '۲', '۳', '۴', '٤', '۵', '٥', '۶', '٦', '۷', '۸', '۹'];
-        $english = [0, 1, 2, 3, 4, 4, 5, 5, 6, 6, 7, 8, 9];
+        $from = ['۰', '۱', '۲', '۳', '۴', '٤', '۵', '٥', '۶', '٦', '۷', '۸', '۹'];
+        $to = [0, 1, 2, 3, 4, 4, 5, 5, 6, 6, 7, 8, 9];
 
-        return str_replace($persian, $english, $content);
+        return str_replace($from, $to, $content);
     }
 }
